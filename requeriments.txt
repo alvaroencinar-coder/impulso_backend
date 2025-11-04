@@ -1,4 +1,0 @@
-fastapi
-uvicorn
-gpt4all
-langdetect
