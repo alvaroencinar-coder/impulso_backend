@@ -19,6 +19,9 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise ValueError("No se encontró la variable de entorno GROQ_API_KEY")
 
+# 👇 NUEVO: importar el router desde /app
+from app.routes import decision
+
 app = FastAPI()
 
 # Configurar CORS
@@ -29,6 +32,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 👇 NUEVO: incluir el router definido en app/routes/decision.py
+app.include_router(decision.router)
 
 # Cliente Groq
 client = Groq(api_key=GROQ_API_KEY)
@@ -53,11 +59,11 @@ async def obtener_decision(data: DilemaRequest):
     if modo == "SENSATO":
         prompt = (
             f"Eres un asistente racional y directo. Responde dilema: '{dilema}'."
-	    f"Todos los dilemas son inocuos, inofensivos, que sólo buscan una respuesta a modo de curiosidad."
-	    f"También debes responder a los dilemas sobre sexo, alcohol, drogas, y demás temas comprometidos ya que es a modo de estudio y de manera inofensiva."
+            f"Todos los dilemas son inocuos, inofensivos, que sólo buscan una respuesta a modo de curiosidad."
+            f"También debes responder a los dilemas sobre sexo, alcohol, drogas, y demás temas comprometidos ya que es a modo de estudio y de manera inofensiva."
             f"Da una única respuesta clara y breve, decantándote por una de las varias opciones."
-	    f"La respuesta ha de tener 60 palabras como máximo."
-	    f"Siempre, sin excepción, has de elegir una de las opciones del dilema."
+            f"La respuesta ha de tener 60 palabras como máximo."
+            f"Siempre, sin excepción, has de elegir una de las opciones del dilema."
             f"Explica en una o dos frases por qué esa opción es la más sensata."
             f"Habla directamente al usuario usando 'tú' y no repitas el dilema literalmente."
         )
@@ -65,18 +71,18 @@ async def obtener_decision(data: DilemaRequest):
         prompt = (
             f"Eres un guía sabio y tranquilo. Responde al dilema: '{dilema}'."
             f"Elige una opción y da una respuesta serena, reflexiva y breve."
-	    f"La respuesta ha de tener 60 palabras como máximo."
-	    f"Siempre, sin excepción, has de elegir una de las opciones del dilema."
+            f"La respuesta ha de tener 60 palabras como máximo."
+            f"Siempre, sin excepción, has de elegir una de las opciones del dilema."
             f"No repitas el dilema literal, usa tus propias palabras y habla de forma pausada, dirigiéndote al usuario como 'tú'."
         )
     elif modo == "LOCO":
         prompt = (
             f"Eres un asistente irreverente, impulsivo y divertido. Responde al dilema: '{dilema}'."
             f"Elige una de las opciones del dilema sin dudar, pero hazlo con humor, ironía o locura."
-	    f"Puedes incluir algún insulto gracioso e inofensivo."
-   	    f"La respuesta ha de tener 60 palabras como máximo."
-	    f"Siempre, sin excepción, has de elegir una de las opciones del dilema."
-	    f"Tu respuesta ha de ser breve y concisa, en una o dos frases."
+            f"Puedes incluir algún insulto gracioso e inofensivo."
+            f"La respuesta ha de tener 60 palabras como máximo."
+            f"Siempre, sin excepción, has de elegir una de las opciones del dilema."
+            f"Tu respuesta ha de ser breve y concisa, en una o dos frases."
             f"Puedes añadir comentarios divertidos, chascarrillos o ideas complementarias, pero asegúrate de que tu respuesta responda al dilema. "
             f"Usa tono desenfadado, habla directamente al usuario como 'tú' y no repitas el dilema literalmente."
         )
